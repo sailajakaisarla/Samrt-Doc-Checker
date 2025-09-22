@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Doc Checker - Upload</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Upload Any File</h1>
+
+    <!-- File upload form -->
+    <form id="uploadForm" enctype="multipart/form-data">
+      <input type="file" id="fileInput" name="file" required />
+      <button type="submit">Upload</button>
+    </form>
+
+    <div id="result" class="result-box"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById("uploadForm");
+    const resultBox = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById("fileInput");
+      const file = fileInput.files[0];
+
+      if (!file) {
+        resultBox.textContent = "Please select a file first!";
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const response = await fetch("http://localhost:5000/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+        resultBox.innerHTML = `
+          <h3>Upload Success ✅</h3>
+          <p><b>Message:</b> ${data.message}</p>
+          <pre>${JSON.stringify(data.analysis, null, 2)}</pre>
+        `;
+      } catch (error) {
+        console.error("Error:", error);
+        resultBox.innerHTML = `<p style="color:red;">❌ Error uploading file</p>`;
+      }
+    });
+  </script>
+</body>
+</html>

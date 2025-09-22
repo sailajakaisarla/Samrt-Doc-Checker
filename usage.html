@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Usage — Smart Doc Checker</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+<body>
+  <nav class="nav" role="navigation" aria-label="Main">
+    <div class="brand">Smart Doc Checker</div>
+    <div class="links" role="menu">
+      <a href="/index.html">Home</a>
+      <a href="/upload.html">Upload Files</a>
+      <a href="/reports.html">Reports</a>
+      <a href="/usage.html">Usage</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="card usage-card">
+      <h2>Usage summary</h2>
+      <div id="counters" class="counters">
+        <div class="counter">
+          <div class="big" id="docsAnalyzed">-</div>
+          <div class="muted">Documents analyzed</div>
+        </div>
+        <div class="counter">
+          <div class="big" id="reportsGenerated">-</div>
+          <div class="muted">Reports generated</div>
+        </div>
+      </div>
+      <div id="billing" class="muted small">Billing info appears on upload and in report details.</div>
+    </div>
+  </main>
+
+  <script>
+  (function(){
+    async function load() {
+      try {
+        const res = await fetch('/api/usage');
+        const j = await res.json();
+        document.getElementById('docsAnalyzed').textContent = j.docsAnalyzed || 0;
+        document.getElementById('reportsGenerated').textContent = j.reportsGenerated || 0;
+      } catch(e) {
+        document.getElementById('docsAnalyzed').textContent = '-';
+        document.getElementById('reportsGenerated').textContent = '-';
+      }
+    }
+    load();
+    setInterval(load, 5000);
+  })();
+  </script>
+</body>
+</html>

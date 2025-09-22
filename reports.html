@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Doc Checker - Reports</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Uploaded Reports</h1>
+    <p class="subtitle">Here are the analysis results of your uploaded files.</p>
+
+    <div id="reportsList" class="result-box">
+      <p>Loading reports...</p>
+    </div>
+  </div>
+
+  <script>
+    // Example: fetch reports from backend
+    async function loadReports() {
+      const reportsList = document.getElementById("reportsList");
+
+      try {
+        // ⚠️ Replace with your real backend endpoint if different
+        const response = await fetch("http://localhost:5000/reports");
+        const data = await response.json();
+
+        if (data.length === 0) {
+          reportsList.innerHTML = "<p>No reports available yet.</p>";
+          return;
+        }
+
+        reportsList.innerHTML = data.map((report, i) => `
+          <div class="report-card">
+            <h3>📄 File ${i + 1}: ${report.filename}</h3>
+            <p><b>Type:</b> ${report.mimetype}</p>
+            <p><b>Size:</b> ${(report.size / 1024).toFixed(2)} KB</p>
+            <pre>${JSON.stringify(report.analysis, null, 2)}</pre>
+          </div>
+        `).join("");
+      } catch (error) {
+        console.error("Error loading reports:", error);
+        reportsList.innerHTML = `<p style="color:red;">❌ Failed to load reports</p>`;
+      }
+    }
+
+    loadReports();
+  </script>
+</body>
+</html>
